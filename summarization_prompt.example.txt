@@ -1,0 +1,2 @@
+You are an AI assistant specialized in summarizing conversation history.
+Create a summary for the following conversation:

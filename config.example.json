@@ -1,0 +1,55 @@
+{
+    "app_id": "xxxx25575364820xxxx",
+    "db": "kamui",
+    "db_url": "mongodb://localhost:27017",
+    "token": "xxxx.xxxx.xxxx",
+    "default_prefix": ";;",
+    "owner_id": "xxxx82687012798xxxx",
+    "owner_username": "claire.tacet",
+    "self": {
+        "name": "Kamui",
+        "color": "#58111a"
+    },
+    "phishing_filter": {
+        "link_spam_limit": 3,
+        "link_spam_timeout_minute": 0.25
+    },
+    "llm": {
+        "server_url": "http://localhost:11002",
+        "model": "openai/gpt-oss-20b",
+        "temperature": 0.7,
+        "max_tokens": 2000,
+        "system_prompt_index_strategy": "penultimate",
+        "response_gating": {
+            "enabled": true,
+            "server_url": "http://localhost:11002",
+            "model": "qwen/qwen3-coder-30b",
+            "temperature": 0.3,
+            "listening_strategy": "previous",
+            "idle_strategy": "none",
+            "listening_timeout_second": 60,
+            "previous_message_limit": 5
+        },
+        "memory": {
+            "enabled": true,
+            "depth": 20,
+            "token_limit": 4000,
+            "cleanup_days": 0,
+            "overflow": {
+                "strategy": "summarization",
+                "server_url": "http://localhost:11002",
+                "model": "openai/gpt-oss-20b",
+                "temperature": 0.15
+            }
+        },
+        "metadata": {
+            "previous_message_limit": 20
+        }
+    },
+    "saucenao": {
+        "api_key": "xxxx"
+    },
+    "brave": {
+        "api_key": "xxxx"
+    }
+}
