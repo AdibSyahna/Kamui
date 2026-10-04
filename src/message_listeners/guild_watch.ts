@@ -2,6 +2,7 @@ import { Message, User, Guild, TextChannel, DMChannel, MessageCollector, Message
 import { DiscordBot } from "../bot";
 import { Collection, Db, Document } from "mongodb";
 import { DiscordDatabaseCollections } from "../addon/enum";
+import { MessageListenersTemplate } from "../abstract_class/message_listeners";
 
 /* ---------- Constants ---------- */
 const URL_REGEX = /(https?:\/\/[^\s]+)|(\.co)/i;
@@ -144,7 +145,7 @@ class VerificationService {
 }
 
 /* ---------- Main Handler (Facade) ---------- */
-export class PhishingFilterHandler {
+export class PhishingFilterHandler extends MessageListenersTemplate {
     private db: Db;
     private collection: Collection<Document>;
     private config: PhishingFilterConfig;
@@ -154,6 +155,7 @@ export class PhishingFilterHandler {
     private suspectManager: SuspectManager;
 
     constructor(client: DiscordBot) {
+        super();
         if (!client.db) {
             throw new Error("Database is not initialized on the client.");
         }
@@ -186,7 +188,7 @@ export class PhishingFilterHandler {
     /**
      * Public entry point to scan a message.
      */
-    public async scanMessage(message: Message): Promise<void> {
+    public async handleMessage(message: Message): Promise<void> {
         if (!message.guild) return;
         if (!this.watchedService.getSet().has(message.guild.id)) return;
 
@@ -296,11 +298,11 @@ export class PhishingFilterHandler {
                 suspectEntry.warningMessage.delete().catch(() => { /* noop */ });
             }
 
-            // Remove suspect record regardless â€” user either passed or was informed.
+            // Remove suspect record regardless â€? user either passed or was informed.
             this.suspectManager.removeSuspect(guildId, userId);
         } catch (err) {
             console.error("Failed to DM user for verification:", err);
-            // keep suspect state â€” second offense will ban.
+            // keep suspect state â€? second offense will ban.
         }
     }
 

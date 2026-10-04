@@ -3,8 +3,9 @@ import { DiscordBot } from "../bot";
 import { LLMInvokeResult, LLMService } from "../services/llm_service";
 import { ToolCall } from "@langchain/core/messages/tool";
 import { LLMTool } from "../abstract_class/llm_tool";
+import { MessageListenersTemplate } from "../abstract_class/message_listeners";
 
-export class LLMHandler {
+export class LLMHandler extends MessageListenersTemplate {
     private bot: DiscordBot;
     private llmService: LLMService;
     private coolDown: Map<string, boolean> = new Map(); // channelId -> coolDown?
@@ -12,6 +13,7 @@ export class LLMHandler {
     private listeningTimeout: Map<string, NodeJS.Timeout> = new Map(); // channelId -> setTimeout
 
     constructor(bot: DiscordBot, llmService: LLMService) {
+        super();
         this.bot = bot;
         this.llmService = llmService;
     }
@@ -45,7 +47,7 @@ export class LLMHandler {
 
         if (!this.listening.get(channelId)) {
             const Channel = await this.bot.client.channels.fetch(channelId);
-            Channel?.isSendable() && Channel.send(`\`üëÇ${this.bot.config.self.name} is listening... \``);
+            Channel?.isSendable() && Channel.send(`\`?ëÇ${this.bot.config.self.name} is listening... \``);
         }
 
         this.listening.set(channelId, true);
@@ -59,7 +61,7 @@ export class LLMHandler {
     private async timeoutListening(channelId: string) {
         this.listening.set(channelId, false);
         const Channel = await this.bot.client.channels.fetch(channelId);
-        Channel?.isSendable() && Channel.send(`\`üí§${this.bot.config.self.name} is no longer listening. \``);
+        Channel?.isSendable() && Channel.send(`\`?í§${this.bot.config.self.name} is no longer listening. \``);
     }
 
     private async recursiveGenerateResponse(message: Message, tool_response: boolean = false) {
@@ -89,13 +91,13 @@ export class LLMHandler {
         const CanSend = message.channel.isSendable();
         let status: Message | undefined;
         if (CanSend) {
-            status = await message.channel.send(`\`‚öôÔ∏è${this.bot.config.self.name} ${tool.statusMessage}\``);
+            status = await message.channel.send(`\`‚öôÔ∏?${this.bot.config.self.name} ${tool.statusMessage}\``);
         }
 
         await this.llmService.runTool(tool, tool_call, message.channelId);
 
         if (status && status.editable) {
-            status.edit(`\`‚úÖ${this.bot.config.self.name} ${tool.finishedMessage}\``);
+            status.edit(`\`‚ú?${this.bot.config.self.name} ${tool.finishedMessage}\``);
         }
 
     }

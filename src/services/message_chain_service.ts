@@ -1,5 +1,5 @@
 import { ChatOpenAI } from "@langchain/openai";
-import { HumanMessage, SystemMessage, AIMessage, ToolMessage } from "@langchain/core/messages";
+import { BaseMessage, HumanMessage, SystemMessage, getBufferString } from "@langchain/core/messages";
 import { DiscordBot } from "../bot";
 import { ConversationMemoryManager } from "./memory_manager";
 import { LLMTool } from "../abstract_class/llm_tool";
@@ -32,8 +32,8 @@ export class MessageChainService {
         processedContent: string,
         message: Message,
         tool_response: boolean
-    ): Promise<(SystemMessage | HumanMessage | AIMessage | ToolMessage)[]> {
-        const messages: (SystemMessage | HumanMessage | AIMessage | ToolMessage)[] = [];
+    ): Promise<BaseMessage[]> {
+        const messages: BaseMessage[] = [];
         const { system_prompt_index_strategy: SystemPromptStrategy, memory: MemoryConfig } = this.bot.config.llm;
 
         // Add initial system prompt if needed
@@ -66,21 +66,21 @@ export class MessageChainService {
         return messages;
     }
 
-    private logMessages(messages: (SystemMessage | HumanMessage | AIMessage)[]): void {
+    private logMessages(messages: BaseMessage[]): void {
         console.log('=== PROCESSED MESSAGES SENT TO LLM ===');
         messages.forEach((msg, index) => {
             const content = typeof msg.content === 'string'
                 ? msg.content
-                : String(msg.content);
+                : getBufferString([msg]);
             console.log(`[${index}] ${msg.constructor.name}: ${content}`);
         });
         console.log('=== END PROCESSED MESSAGES ===');
     }
 
-    private async handleLLMInvocation(messages: (SystemMessage | HumanMessage | AIMessage)[]): Promise<LLMInvokeResult> {
+    private async handleLLMInvocation(messages: BaseMessage[]): Promise<LLMInvokeResult> {
         const llm = new ChatOpenAI({
             apiKey: 'not-needed',
-            modelName: this.bot.config.llm.model,
+            model: this.bot.config.llm.model,
             temperature: this.bot.config.llm.temperature,
             maxTokens: this.bot.config.llm.max_tokens,
             configuration: {
@@ -88,7 +88,8 @@ export class MessageChainService {
             },
         });
 
-        const result = await llm.invoke(messages, { tools: this.tools });
+        const llmWithTools = this.tools.length > 0 ? llm.bindTools(this.tools) : llm;
+        const result = await llmWithTools.invoke(messages);
         const response: LLMInvokeResult = {
             response: [result.content.toString()],
             tool_calls: result.tool_calls

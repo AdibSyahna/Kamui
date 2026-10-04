@@ -29,7 +29,7 @@ export class CommandDeclaration extends CommandTemplate {
     public override async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         let script = String(interaction.options.get("code")?.value || '');
         if (!script) {
-            interaction.reply({ content: "Something bad happened. I'm not getting any code to evaluate!", ephemeral: true });
+            interaction.reply({ content: "Something bad happened. I'm not getting any code to evaluate!", flags: ["Ephemeral"] });
             return;
         }
 

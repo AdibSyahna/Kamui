@@ -9,7 +9,7 @@ export class CommandDeclaration extends CommandTemplate {
 
     public override async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         if (!this.client || !this.client.db) {
-            interaction.reply({ content: "Something bad happened. Please try again later.", ephemeral: true });
+            interaction.reply({ content: "Something bad happened. Please try again later.", flags: ["Ephemeral"] });
             return;
         }
 

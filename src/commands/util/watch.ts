@@ -16,7 +16,7 @@ export class CommandDeclaration extends CommandTemplate {
 
         // Check if I have BanMembers permission
         if (!me.permissions.has(PermissionFlagsBits.BanMembers)) {
-            interaction.reply({ content: 'I do not have permission to ban members.', ephemeral: true });
+            interaction.reply({ content: 'I do not have permission to ban members.', flags: ["Ephemeral"] });
             return;
         }
 

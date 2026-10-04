@@ -36,7 +36,7 @@ export class CommandDeclaration extends CommandTemplate {
         if (!apiKey) {
             await interaction.reply({
                 content: "SauceNAO API key is not configured.",
-                ephemeral: true
+                flags: ["Ephemeral"]
             });
             return;
         }
@@ -163,7 +163,7 @@ export class CommandDeclaration extends CommandTemplate {
                 console.error('SauceNAO search error:', err);
                 await interaction.followUp({
                     content: "Sorry! Something bad happened...\nPlease make sure you send a valid image file format.",
-                    ephemeral: true
+                    flags: ["Ephemeral"]
                 });
                 return false;
             }

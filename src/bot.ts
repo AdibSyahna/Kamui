@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { Client, Collection, Events, GatewayIntentBits, Partials, REST, Routes, SlashCommandBuilder } from "discord.js";
+import { Client, Collection, Events, GatewayIntentBits, Partials, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes, SlashCommandBuilder } from "discord.js";
 import { Db, MongoClient } from "mongodb";
 import { AddonHandler } from "./addon";
 import { CommandTemplate } from "./abstract_class/dc_command";
@@ -10,28 +10,34 @@ import { ConversationMemoryManager } from "./services/memory_manager";
 import { ContextOverflowService } from "./services/context_overflow_service";
 import { LLMService } from "./services/llm_service";
 import { LLMTool } from "./abstract_class/llm_tool";
-import { ResponseGatingService } from "./services/response_gating_service";
+import { ModalSubmitHandlerTemplate } from "./abstract_class/modal_handler";
+import { MessageListenersHandler } from "./message_listeners";
 
 export class DiscordBot {
     public client: Client;
     public config: ConfigJSON;
     public db?: Db;
     public addOnHandler?: AddonHandler;
+    public messageListenerHandler?: MessageListenersHandler;
     public memoryManager?: ConversationMemoryManager;
     public llmService?: LLMService;
 
     private commands: Collection<string, { data: SlashCommandBuilder, run: CallableFunction }>;
-    private commandsRegistry: any[];
+    private commandsRegistry: RESTPostAPIChatInputApplicationCommandsJSONBody[];
     private commandsDirectoryPath: string;
+    private modalHandlersDirectoryPath: string;
     private commandsPool: { [commandName: string]: CommandTemplate };
+    private modalSubmitHandler: Collection<string, { handle: CallableFunction }>;
     private toolsRegistry: LLMTool[];
     private toolsDirectoryPath: string;
 
-    public constructor(commandsDirectoryPath: string, toolsDirectoryPath: string) {
+    public constructor(commandsDirectoryPath: string, modalHandlersDirectoryPath: string, toolsDirectoryPath: string) {
         this.commands = new Collection();
-        this.commandsRegistry = [];
+        this.modalSubmitHandler = new Collection();
         this.commandsDirectoryPath = commandsDirectoryPath;
+        this.modalHandlersDirectoryPath = modalHandlersDirectoryPath;
         this.toolsDirectoryPath = toolsDirectoryPath;
+        this.commandsRegistry = [];
         this.toolsRegistry = [];
         this.commandsPool = {};
         this.client = new Client({
@@ -78,11 +84,33 @@ export class DiscordBot {
     }
 
     private listenToMessages() {
-        const PhishingFilter = new PhishingFilterHandler(this);
-        const LLMFilter = new LLMHandler(this, this.llmService!);
-        this.client.on(Events.MessageCreate, async (message) => {
-            await PhishingFilter.scanMessage(message);
-            await LLMFilter.handleMessage(message);
+        this.messageListenerHandler = new MessageListenersHandler();
+        this.messageListenerHandler.startHandlers(this);
+    }
+
+    private listenToModalSubmit() {
+        this.client.on(Events.InteractionCreate, async (interaction): Promise<any> => {
+            if (!interaction.isModalSubmit()) return;
+
+            const ModalID = interaction.customId;
+
+            const Handler = this.modalSubmitHandler.get(ModalID);
+            if (!Handler) {
+                console.error(`A modal submit received, but no handler with modal Id '${ModalID}' registered.`)
+                interaction.reply({ content: "An error has occurred. Please try again later!", flags: ["Ephemeral"] });
+                return;
+            }
+
+            try {
+                await Handler.handle(interaction);
+            } catch (error) {
+                console.error(error);
+
+                if (interaction.replied || interaction.deferred)
+                    return interaction.followUp({ content: "There was an error while processing your modal!", flags: ["Ephemeral"] });
+
+                interaction.reply({ content: "There was an error while processing your modal!", flags: ["Ephemeral"] });
+            }
         });
     }
 
@@ -103,9 +131,9 @@ export class DiscordBot {
                 console.error(error);
 
                 if (interaction.replied || interaction.deferred)
-                    return interaction.followUp({ content: "There was an error while executing this command!", ephemeral: true });
+                    return interaction.followUp({ content: "There was an error while executing this command!", flags: ["Ephemeral"] });
 
-                interaction.reply({ content: "There was an error while executing this command!", ephemeral: true });
+                interaction.reply({ content: "There was an error while executing this command!", flags: ["Ephemeral"] });
             }
         });
     }
@@ -132,6 +160,36 @@ export class DiscordBot {
 
                     // insert to this.toolsRegistry
                     this.toolsRegistry.push(toolInstance);
+                }); // Returns a promise for each import
+        });
+
+        // Wait for all imports of this group to complete
+        await Promise.all(importPromises);
+    }
+
+    // Import modal submit handlers from the modal_handlers directory
+    private async importModalHandlers(): Promise<void> {
+        const HandlerFiles = await fs.promises.readdir(this.modalHandlersDirectoryPath);
+
+        // Collect all import promises
+        const importPromises = HandlerFiles.map(File => {
+            const FilePath = path.resolve(this.modalHandlersDirectoryPath, File);
+            return import(FilePath)
+                .then(imports => {
+                    const ModalHandlerDeclaration = imports.ModalHandlerDeclaration as (new (...args: any[]) => ModalSubmitHandlerTemplate);
+                    if (!ModalHandlerDeclaration) {
+                        console.warn(`${File} has no ModalHandlerDeclaration export class.`);
+                        return;
+                    }
+
+                    // create function instance
+                    const HandlerInstance = new ModalHandlerDeclaration();
+
+                    // reference client
+                    HandlerInstance.assignClient(this);
+
+                    // register command
+                    HandlerInstance.registerHandler(this.modalSubmitHandler);
                 }); // Returns a promise for each import
         });
 
@@ -190,13 +248,15 @@ export class DiscordBot {
     public async start(): Promise<void> {
         this.onReady();
         this.listenToCommandInput();
+        this.listenToModalSubmit();
 
         await this.connectDatabase();
         await this.importLLMTools();
         await this.importCommands();
+        await this.importModalHandlers();
 
         await this.startServices();
-        
+
         // Log in to Discord with your client's token
         await this.client.login(this.config.token);
 

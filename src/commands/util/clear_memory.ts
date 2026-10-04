@@ -20,7 +20,7 @@ export class CommandDeclaration extends CommandTemplate {
             await interaction.reply("Conversation memory for this channel has been cleared.");
         } catch (error) {
             console.error("Error clearing memory:", error);
-            await interaction.reply({ content: "Failed to clear conversation memory. Please try again later.", ephemeral: true });
+            await interaction.reply({ content: "Failed to clear conversation memory. Please try again later.", flags: ["Ephemeral"] });
         }
     }
 }

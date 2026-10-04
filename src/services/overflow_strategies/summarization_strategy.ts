@@ -55,7 +55,7 @@ export class SummarizationStrategy implements IOverflowStrategy {
         // Create LLM instance with overflow config
         const llm = new ChatOpenAI({
             apiKey: 'not-needed',
-            modelName: config.model,
+            model: config.model,
             temperature: config.temperature,
             maxTokens: 500, // Limit summary length
             configuration: {

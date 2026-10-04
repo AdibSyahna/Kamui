@@ -35,14 +35,14 @@ export class CommandDeclaration extends CommandTemplate {
             );
 
             const statusMessage = newEnabled
-                ? "‚úÖ LLM responses are now **enabled** for this channel."
-                : "‚ùå LLM responses are now **disabled** for this channel.";
+                ? "‚ú? LLM responses are now **enabled** for this channel."
+                : "‚ù? LLM responses are now **disabled** for this channel.";
 
-            await interaction.reply({ content: statusMessage, ephemeral: true });
+            await interaction.reply({ content: statusMessage, flags: ["Ephemeral"] });
 
         } catch (error) {
             console.error("Error toggling chat settings:", error);
-            await interaction.reply({ content: "Failed to toggle chat settings. Please try again later.", ephemeral: true });
+            await interaction.reply({ content: "Failed to toggle chat settings. Please try again later.", flags: ["Ephemeral"] });
         }
     }
 }

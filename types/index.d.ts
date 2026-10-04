@@ -1,6 +1,7 @@
 import "./config"
 import "./db.marketplace"
 import "./db.watch_guild"
+import "./db.honeytrap_settings"
 import "./db.conversation"
 import "./db.chat_settings"
 import "./guild_watch"

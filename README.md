@@ -11,12 +11,12 @@ Most features are in alpha stage, which means lots of bugs + changes are to be e
 - **Memory Management**: Maintains conversation history per channel using MongoDB
 - **Context Overflow Handling**: Manages conversation length with summarization strategies
 - **Response Gating**: Filters and validates LLM responses before sending to Discord
+- **Honey Trap**: Ban every member who sent a message inside every designated honey trap channels
 - [DISABLED] **JavaScript Execution Tool**: Can execute JavaScript code in a sandboxed environment
 - [OUTDATED] **Phishing/Spam Detection**: Filters out spam links and malicious content
 
 ## Planned Features
 
-- **Honeytrap Channel**: Add and watch honeytrap channels to handle spam accounts.
 - **Music Player**: Play music from external source to Discord Voice Channel.
 - **AI Live Speak**: Directly talk to AI in Discord Voice Channel.
 

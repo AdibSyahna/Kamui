@@ -1,4 +1,4 @@
-import { StructuredTool } from "langchain";
+import { StructuredTool } from "@langchain/core/tools";
 import { DiscordBot } from "../bot";
 
 export abstract class LLMTool extends StructuredTool {

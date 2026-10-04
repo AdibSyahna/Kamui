@@ -33,7 +33,7 @@ export abstract class CommandTemplate {
 
     public run(interaction: CommandInteraction) {
         if (!this.client || !this.client.db) {
-            interaction.reply({ content: "Something bad happened. Please try again later.", ephemeral: true });
+            interaction.reply({ content: "Something bad happened. Please try again later.", flags: ["Ephemeral"] });
             return;
         }
 
@@ -41,7 +41,7 @@ export abstract class CommandTemplate {
         if (this.ownerOnly) {
             const OwnerId = this.client.config.owner_id;
             if (interaction.user.id != OwnerId) {
-                interaction.reply({ content: "I'm sorry, but this command is only available for Owner!", ephemeral: true });
+                interaction.reply({ content: "I'm sorry, but this command is only available for Owner!", flags: ["Ephemeral"] });
                 return;
             };
         } else if (this.adminOnly) {
@@ -52,7 +52,7 @@ export abstract class CommandTemplate {
 
             if (interaction.member instanceof GuildMember) {
                 if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
-                    return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true });
+                    return interaction.reply({ content: 'You do not have permission to use this command.', flags: ["Ephemeral"] });
                 }
             }
         } else if (this.guildOnly) {

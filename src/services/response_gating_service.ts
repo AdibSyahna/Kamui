@@ -81,7 +81,7 @@ export class ResponseGatingService {
     private async handleLLMInvocation(messages: (SystemMessage | HumanMessage | AIMessage)[]): Promise<string> {
         const llm = new ChatOpenAI({
             apiKey: 'not-needed',
-            modelName: this.bot.config.llm.response_gating.model,
+            model: this.bot.config.llm.response_gating.model,
             temperature: this.bot.config.llm.response_gating.temperature,
             maxTokens: 1, // either "YES" or "NO"
             configuration: {
