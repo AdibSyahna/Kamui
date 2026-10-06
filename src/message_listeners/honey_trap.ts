@@ -37,15 +37,14 @@ export class HoneyTrapHandler extends MessageListenersTemplate {
 
     public handleMessage(message: Message) {
         if (message.author.id == this.client.client.user?.id) return; // ignore self message
+        const Identifier = message.guildId + message.channelId;
+        const isHoneyTrapChannel = this.watchList.get(Identifier);
+        if (!isHoneyTrapChannel) return;
         if (message.author.bot) {
             // only delete messages from bots
             message.delete();
             return;
         }
-
-        const Identifier = message.guildId + message.channelId;
-        const isHoneyTrapChannel = this.watchList.get(Identifier);
-        if (!isHoneyTrapChannel) return;
         this.handlePrey(message, isHoneyTrapChannel);
     }
 
