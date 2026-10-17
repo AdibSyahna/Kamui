@@ -1,4 +1,4 @@
-import { ChannelSelectMenuBuilder, ChannelType, ChatInputCommandInteraction, LabelBuilder, ModalBuilder, PermissionFlagsBits, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
+import { ChannelSelectMenuBuilder, ChannelType, ChatInputCommandInteraction, LabelBuilder, ModalBuilder, PermissionFlagsBits, SlashCommandBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { CommandTemplate } from "../../abstract_class/dc_command";
 import { DiscordDatabaseCollections } from "../../addon/enum";
 import { CHANNEL_LABEL_ID, DESC_LABEL_ID, MODAL_ID, TITLE_LABEL_ID } from "../../modal_handlers/honey_trap";

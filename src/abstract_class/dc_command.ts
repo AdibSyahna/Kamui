@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, CommandInteraction, Collection, RESTPostAPIChatInputApplicationCommandsJSONBody, GuildMemberRoleManager, PermissionFlagsBits, GuildMember } from "discord.js";
+import { SlashCommandBuilder, CommandInteraction, Collection, RESTPostAPIChatInputApplicationCommandsJSONBody, PermissionFlagsBits, GuildMember } from "discord.js";
 import { DiscordBot } from "../bot";
 
 type CommandCollection = Collection<string, { data: SlashCommandBuilder, run: CallableFunction }>;

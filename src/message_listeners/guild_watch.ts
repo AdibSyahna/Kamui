@@ -1,4 +1,4 @@
-import { Message, User, Guild, TextChannel, DMChannel, MessageCollector, Message as DiscordMessage } from "discord.js";
+import { Message, User, Guild, DMChannel } from "discord.js";
 import { DiscordBot } from "../bot";
 import { Collection, Db, Document } from "mongodb";
 import { DiscordDatabaseCollections } from "../addon/enum";

@@ -1,4 +1,4 @@
-import { ColorResolvable, EmbedBuilder, Message, ModalSubmitInteraction, TextChannel } from "discord.js";
+import { Message, ModalSubmitInteraction, TextChannel } from "discord.js";
 import { ModalSubmitHandlerTemplate } from "../abstract_class/modal_handler";
 import { DiscordDatabaseCollections } from "../addon/enum";
 

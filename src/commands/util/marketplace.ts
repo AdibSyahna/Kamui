@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, CommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { CommandTemplate } from "../../abstract_class/dc_command";
 import { DiscordDatabaseCollections } from "../../addon/enum";
 

@@ -4,8 +4,6 @@ import { Client, Collection, Events, GatewayIntentBits, Partials, REST, RESTPost
 import { Db, MongoClient } from "mongodb";
 import { AddonHandler } from "./addon";
 import { CommandTemplate } from "./abstract_class/dc_command";
-import { PhishingFilterHandler } from "./message_listeners/guild_watch";
-import { LLMHandler } from "./message_listeners/llm";
 import { ConversationMemoryManager } from "./services/memory_manager";
 import { ContextOverflowService } from "./services/context_overflow_service";
 import { LLMService } from "./services/llm_service";
