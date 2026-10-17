@@ -1,11 +1,11 @@
 {
-    "app_id": "xxxx25575364820xxxx",
+    "app_id": "YOUR_DISCORD_BOT_ID_HERE",
     "db": "kamui",
     "db_url": "mongodb://localhost:27017",
-    "token": "xxxx.xxxx.xxxx",
+    "token": "YOUR_DISCORD_API_KEY_HERE",
     "default_prefix": ";;",
-    "owner_id": "xxxx82687012798xxxx",
-    "owner_username": "claire.tacet",
+    "owner_id": "YOUR_DISCORD_USER_ID_HERE",
+    "owner_username": "YOUR_DISCORD_USER_NAME_HERE",
     "self": {
         "name": "Kamui",
         "color": "#58111a"
@@ -47,9 +47,9 @@
         }
     },
     "saucenao": {
-        "api_key": "xxxx"
+        "api_key": "YOUR_SAUCENAO_API_KEY_HERE"
     },
     "brave": {
-        "api_key": "xxxx"
+        "api_key": "YOUR_BRAVE_API_KEY_HERE"
     }
 }
