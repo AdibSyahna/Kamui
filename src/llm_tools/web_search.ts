@@ -11,11 +11,11 @@ const Schema = z.object({
 });
 
 export default class WebSearchTool extends LLMTool {
-  name = "web_search";
-  description = "Performs a web search using Brave Search API and returns relevant results.";
-  schema = Schema;
-  override statusMessage: string = "is searching the web...";
-  override finishedMessage: string = "has finished searching the web.";
+  public name = "web_search";
+  public description = "Performs a web search using Brave Search API and returns relevant results.";
+  public schema = Schema;
+  public override statusMessage: string = "is searching the web...";
+  public override finishedMessage: string = "has finished searching the web.";
 
   async _call(input: { query: string; numResults?: number }): Promise<string> {
     try {
@@ -63,7 +63,7 @@ export default class WebSearchTool extends LLMTool {
       const summary = `Found ${totalResults} results for "${input.query}". Showing top ${numResults}:\n\n`;
 
       console.log(summary + results);
-      
+
       return summary + results;
     } catch (error: unknown) {
       console.error("Brave Search API error:", error);

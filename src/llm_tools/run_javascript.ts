@@ -8,11 +8,11 @@ const Schema = z.object({
 });
 
 export default class RunJavascriptTool extends LLMTool {
-  name = "run_javascript";
-  description = "Executes JavaScript code safely inside an isolated VM.";
-  schema = Schema;
-  override statusMessage: string = "is evaluating JavaScript code...";
-  override finishedMessage: string = "has finished evaluating JavaScript code.";
+  public name = "run_javascript";
+  public description = "Executes JavaScript code safely inside an isolated VM.";
+  public schema = Schema;
+  public override statusMessage: string = "is evaluating JavaScript code...";
+  public override finishedMessage: string = "has finished evaluating JavaScript code.";
   // private safeEval = new SafeEval();
 
   async _call(input: { code: string }): Promise<string> {
